@@ -6,7 +6,7 @@ import (
 	"time"
 	"encoding/json"
 	"strings"
-	"github.com/Sirupsen/logrus"
+	"github.com/sirupsen/logrus"
 )
 
 const(

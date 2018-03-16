@@ -3,7 +3,7 @@ package rbd
 import (
 	"testing"
 	"github.com/stretchr/testify/assert"
-	"github.com/Sirupsen/logrus"
+	"github.com/sirupsen/logrus"
 	"os/exec"
 )
 
