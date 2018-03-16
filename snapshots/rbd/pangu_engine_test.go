@@ -5,6 +5,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/sirupsen/logrus"
 	"os/exec"
+	"os"
 )
 
 var(
@@ -56,6 +57,15 @@ func TestPanguCloneAndMap(t *testing.T)  {
 	dev,err := e.Map(id)
 	assert.Nil(t, err)
 
+	if _,err = os.Stat(mountPath); err != nil{
+		if os.IsNotExist(err) {
+			err = os.MkdirAll(mountPath, 0755)
+			assert.Nil(t, err)
+		}else {
+			assert.Error(t, err)
+		}
+	}
+
 	logrus.Infof("map dev is %s", dev)
 	_, err = exec.Command("mount", dev, mountPath).CombinedOutput()
 	assert.Nil(t, err)
@@ -64,6 +74,9 @@ func TestPanguCloneAndMap(t *testing.T)  {
 	assert.Nil(t, err)
 
 	err = e.Unmap(id)
+	assert.Nil(t, err)
+
+	err = e.Remove(id)
 	assert.Nil(t, err)
 }
 
