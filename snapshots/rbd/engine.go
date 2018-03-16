@@ -8,6 +8,7 @@ import (
 	"context"
 	"bytes"
 	"syscall"
+	"errors"
 )
 
 var(
@@ -22,9 +23,12 @@ type ExecResult struct {
 }
 
 func runWithTimeout(cmd *exec.Cmd, timeout time.Duration) (*ExecResult, error) {
-	ctx, _ := context.WithTimeout(context.Background(), timeout)
-	nCmd := exec.CommandContext(ctx, cmd.Path, cmd.Args)
+	if len(cmd.Args) <= 1 {
+		return &ExecResult{ExitStatus: -1}, errors.New("cmd args is nil")
+	}
 
+	ctx, _ := context.WithTimeout(context.Background(), timeout)
+	nCmd := exec.CommandContext(ctx, cmd.Path, cmd.Args[1:]...)
 
 	stdout := bytes.Buffer{}
 	stderr := bytes.Buffer{}

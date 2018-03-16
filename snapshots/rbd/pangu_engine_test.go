@@ -29,6 +29,8 @@ func TestPanguCreateAndRemove(t *testing.T)  {
 	assert.Equal(t, false, exists)
 	assert.Equal(t, id, newId)
 
+	logrus.Infof("newId is %s", newId)
+
 	err = e.Remove(id)
 	assert.Nil(t, err)
 }
