@@ -1,13 +1,6 @@
 {
 	"comment": "",
 	"ignore": "",
-	"package": [
-		{
-			"checksumSHA1": "cuGODCCWLHFv+VJwZgnkNr83CdQ=",
-			"path": "github.com/contiv/executor",
-			"revision": "337a1adae71d5814d0a11c41c0f11d292b7a7625",
-			"revisionTime": "2016-07-27T18:54:06Z"
-		}
-	],
+	"package": [],
 	"rootPath": "github.com/containerd/containerd"
 }

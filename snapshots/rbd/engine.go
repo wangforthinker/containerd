@@ -6,8 +6,8 @@ import (
 	"os/exec"
 	"time"
 	"context"
-
-	"github.com/contiv/executor"
+	"bytes"
+	"syscall"
 )
 
 var(
@@ -15,9 +15,37 @@ var(
 	engineInitFnLock = &sync.RWMutex{}
 )
 
-func runWithTimeout(cmd *exec.Cmd, timeout time.Duration) (*executor.ExecResult, error) {
+type ExecResult struct {
+	Stdout     string
+	Stderr     string
+	ExitStatus int
+}
+
+func runWithTimeout(cmd *exec.Cmd, timeout time.Duration) (*ExecResult, error) {
 	ctx, _ := context.WithTimeout(context.Background(), timeout)
-	return executor.NewCapture(cmd).Run(ctx)
+	nCmd := exec.CommandContext(ctx, cmd.Path, cmd.Args)
+
+
+	stdout := bytes.Buffer{}
+	stderr := bytes.Buffer{}
+
+	nCmd.Stdout = &stdout
+	nCmd.Stderr = &stderr
+
+	err := nCmd.Run()
+
+	rs := &ExecResult{
+		Stdout: stdout.String(),
+		Stderr: stderr.String(),
+	}
+
+	if err != nil {
+		if exit, ok := err.(*exec.ExitError); ok {
+			rs.ExitStatus = int(exit.ProcessState.Sys().(syscall.WaitStatus) / 256)
+		}
+	}
+
+	return rs,err
 }
 
 type RBDEngine interface {
