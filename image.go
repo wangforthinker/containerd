@@ -13,6 +13,7 @@ import (
 	"github.com/opencontainers/image-spec/identity"
 	ocispec "github.com/opencontainers/image-spec/specs-go/v1"
 	"github.com/pkg/errors"
+	"github.com/containerd/containerd/snapshots"
 )
 
 // Image describes an image used by containers
@@ -102,12 +103,15 @@ func (i *image) Unpack(ctx context.Context, snapshotterName string) error {
 		sn = i.client.SnapshotService(snapshotterName)
 		a  = i.client.DiffService()
 		cs = i.client.ContentStore()
+		//add label type=image when prepare snapshot for image
+		m = map[string]string{snapshots.TypeLabelKey : snapshots.ImageType}
+		imageLabelOpt = snapshots.WithLabels(m)
 
 		chain    []digest.Digest
 		unpacked bool
 	)
 	for _, layer := range layers {
-		unpacked, err = rootfs.ApplyLayer(ctx, layer, chain, sn, a)
+		unpacked, err = rootfs.ApplyLayer(ctx, layer, chain, sn, a, imageLabelOpt)
 		if err != nil {
 			return err
 		}

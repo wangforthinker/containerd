@@ -20,6 +20,12 @@ const (
 	KindCommitted
 )
 
+// add label type=image in Snapshotter metadata Info.Labels to indicate the snapshot for image.
+const(
+	TypeLabelKey = "type"
+	ImageType = "image"
+)
+
 // ParseKind parses the provided string into a Kind
 //
 // If the string cannot be parsed KindUnknown is returned
